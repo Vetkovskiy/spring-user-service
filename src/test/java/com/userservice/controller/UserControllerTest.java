@@ -64,11 +64,7 @@ class UserControllerTest {
                 .age(30)
                 .build();
 
-        updateDTO = UserUpdateDTO.builder()
-                .name("Jane Doe")
-                .email("jane@example.com")
-                .age(25)
-                .build();
+        updateDTO = new UserUpdateDTO("Jane Doe", "jane@example.com", 25);
 
         responseDTO = UserResponseDTO.builder()
                 .id(1L)
@@ -99,7 +95,7 @@ class UserControllerTest {
     @Test
     @DisplayName("POST /api/v1/users - валидация: пустое имя")
     void createUser_ValidationFailure_EmptyName() throws Exception {
-        createDTO.setName("");
+        createDTO = UserCreateDTO.builder().name("").build();
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +110,7 @@ class UserControllerTest {
     @Test
     @DisplayName("POST /api/v1/users - валидация: невалидный email")
     void createUser_ValidationFailure_InvalidEmail() throws Exception {
-        createDTO.setEmail("invalid-email");
+        createDTO = UserCreateDTO.builder().email("invalid-email").build();
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +124,7 @@ class UserControllerTest {
     @Test
     @DisplayName("POST /api/v1/users - валидация: возраст меньше 0")
     void createUser_ValidationFailure_NegativeAge() throws Exception {
-        createDTO.setAge(-1);
+        createDTO = UserCreateDTO.builder().age(-1).build();
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -142,7 +138,7 @@ class UserControllerTest {
     @Test
     @DisplayName("POST /api/v1/users - валидация: возраст больше 150")
     void createUser_ValidationFailure_AgeTooHigh() throws Exception {
-        createDTO.setAge(151);
+        createDTO = UserCreateDTO.builder().age(151).build();
 
         mockMvc.perform(post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)

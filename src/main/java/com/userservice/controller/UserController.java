@@ -40,7 +40,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> createUser(
             @Valid @RequestBody UserCreateDTO request) {
 
-        log.info("REST request to create user: {}", request.getEmail());
+        log.debug("REST request to create user: {}", request.getEmail());
         UserResponseDTO created = userService.createUser(request);
 
         return new ResponseEntity<>(created, HttpStatus.CREATED);
@@ -54,7 +54,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> getUserById(
             @PathVariable Long id) {
 
-        log.info("REST request to get user by id: {}", id);
+        log.debug("REST request to get user by id: {}", id);
         UserResponseDTO user = userService.getUserById(id);
 
         return ResponseEntity.ok(user);
@@ -67,7 +67,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
 
-        log.info("REST request to get all users");
+        log.debug("REST request to get all users");
         List<UserResponseDTO> users = userService.getAllUsers();
 
         return ResponseEntity.ok(users);
@@ -78,11 +78,10 @@ public class UserController {
      * PUT /api/users/{id}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(
-            @PathVariable Long id,
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id,
             @Valid @RequestBody UserUpdateDTO request) {
 
-        log.info("REST request to update user with id: {}", id);
+        log.debug("REST request to update user with id: {}", id);
         UserResponseDTO updated = userService.updateUser(id, request);
 
         return ResponseEntity.ok(updated);
@@ -96,7 +95,7 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(
             @PathVariable Long id) {
 
-        log.info("REST request to delete user with id: {}", id);
+        log.debug("REST request to delete user with id: {}", id);
         userService.deleteUser(id);
 
         return ResponseEntity.noContent().build();
@@ -110,7 +109,7 @@ public class UserController {
     public ResponseEntity<Boolean> existsByEmail(
             @RequestParam String email) {
 
-        log.info("REST request to check if email exists: {}", email);
+        log.debug("REST request to check if email exists: {}", email);
         boolean exists = userService.existsByEmail(email);
 
         return ResponseEntity.ok(exists);

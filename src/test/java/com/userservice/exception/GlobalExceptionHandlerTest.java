@@ -272,11 +272,7 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("Update validation: валидация работает для PUT запросов")
     void handleValidationExceptions_ForUpdateRequests() throws Exception {
-        UserUpdateDTO invalidDTO = UserUpdateDTO.builder()
-                .name("a".repeat(101))
-                .email("invalid")
-                .age(-10)
-                .build();
+        UserUpdateDTO invalidDTO = new UserUpdateDTO("a".repeat(101), "invalid", -10);
 
         mockMvc.perform(put("/api/v1/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -300,9 +296,8 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("Duplicate resource on update: конфликт при обновлении")
     void handleDuplicateResourceException_OnUpdate_Returns409() throws Exception {
-        UserUpdateDTO updateDTO = UserUpdateDTO.builder()
-                .email("existing@example.com")
-                .build();
+        UserUpdateDTO updateDTO = new UserUpdateDTO();
+        updateDTO.setEmail("existing@example.com");
 
         when(userService.updateUser(eq(1L), any(UserUpdateDTO.class)))
                 .thenThrow(new DuplicateResourceException("User with email existing@example.com already exists"));
@@ -318,9 +313,8 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("Resource not found on update: 404 при попытке обновить несуществующего пользователя")
     void handleResourceNotFoundException_OnUpdate_Returns404() throws Exception {
-        UserUpdateDTO updateDTO = UserUpdateDTO.builder()
-                .name("New Name")
-                .build();
+        UserUpdateDTO updateDTO = new UserUpdateDTO();
+                updateDTO.setName("New Name");
 
         when(userService.updateUser(eq(999L), any(UserUpdateDTO.class)))
                 .thenThrow(new ResourceNotFoundException("User not found with id: 999"));

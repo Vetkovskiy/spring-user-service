@@ -57,19 +57,10 @@ class UserServiceImplTest {
                 .age(30)
                 .build();
 
-        updateDTO = UserUpdateDTO.builder()
-                .name("Jane Doe")
-                .email("jane@example.com")
-                .age(25)
-                .build();
+        updateDTO = new UserUpdateDTO("Jane Doe", "jane@example.com", 25);
 
-        userEntity = UserEntity.builder()
-                .id(1L)
-                .name("John Doe")
-                .email("john@example.com")
-                .age(30)
-                .createdAt(LocalDateTime.now())
-                .build();
+        userEntity = new UserEntity(1L, "John Doe", "john@example.com", 30, LocalDateTime.now());
+
 
         responseDTO = UserResponseDTO.builder()
                 .id(1L)
@@ -84,9 +75,9 @@ class UserServiceImplTest {
     @DisplayName("createUser: успешное создание пользователя")
     void createUser_Success() {
         when(userRepository.existsByEmail(createDTO.getEmail())).thenReturn(false);
-        when(userMapper.toEntity(createDTO)).thenReturn(userEntity);
+        when(userMapper.ofDTO(createDTO)).thenReturn(userEntity);
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-        when(userMapper.toResponseDTO(userEntity)).thenReturn(responseDTO);
+        when(userMapper.ofEntity(userEntity)).thenReturn(responseDTO);
 
         UserResponseDTO result = userService.createUser(createDTO);
 
@@ -95,9 +86,9 @@ class UserServiceImplTest {
         assertThat(result.getName()).isEqualTo(createDTO.getName());
 
         verify(userRepository).existsByEmail(createDTO.getEmail());
-        verify(userMapper).toEntity(createDTO);
+        verify(userMapper).ofDTO(createDTO);
         verify(userRepository).save(any(UserEntity.class));
-        verify(userMapper).toResponseDTO(userEntity);
+        verify(userMapper).ofEntity(userEntity);
     }
 
     @Test
@@ -110,7 +101,7 @@ class UserServiceImplTest {
                 .hasMessageContaining("already exists");
 
         verify(userRepository).existsByEmail(createDTO.getEmail());
-        verify(userMapper, never()).toEntity(any());
+        verify(userMapper, never()).ofDTO(any());
         verify(userRepository, never()).save(any());
     }
 
@@ -118,7 +109,7 @@ class UserServiceImplTest {
     @DisplayName("getUserById: успешное получение пользователя")
     void getUserById_Success() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
-        when(userMapper.toResponseDTO(userEntity)).thenReturn(responseDTO);
+        when(userMapper.ofEntity(userEntity)).thenReturn(responseDTO);
 
         UserResponseDTO result = userService.getUserById(1L);
 
@@ -126,7 +117,7 @@ class UserServiceImplTest {
         assertThat(result.getId()).isEqualTo(1L);
 
         verify(userRepository).findById(1L);
-        verify(userMapper).toResponseDTO(userEntity);
+        verify(userMapper).ofEntity(userEntity);
     }
 
     @Test
@@ -139,19 +130,14 @@ class UserServiceImplTest {
                 .hasMessageContaining("not found");
 
         verify(userRepository).findById(999L);
-        verify(userMapper, never()).toResponseDTO(any());
+        verify(userMapper, never()).ofEntity(any());
     }
 
     @Test
     @DisplayName("getAllUsers: успешное получение всех пользователей")
     void getAllUsers_Success() {
-        UserEntity user2 = UserEntity.builder()
-                .id(2L)
-                .name("Jane Smith")
-                .email("jane@example.com")
-                .age(25)
-                .createdAt(LocalDateTime.now())
-                .build();
+        UserEntity user2 = new UserEntity(
+                2L, "Jane Smith", "jane@example.com", 25, LocalDateTime.now());
 
         UserResponseDTO response2 = UserResponseDTO.builder()
                 .id(2L)
@@ -162,8 +148,8 @@ class UserServiceImplTest {
                 .build();
 
         when(userRepository.findAll()).thenReturn(List.of(userEntity, user2));
-        when(userMapper.toResponseDTO(userEntity)).thenReturn(responseDTO);
-        when(userMapper.toResponseDTO(user2)).thenReturn(response2);
+        when(userMapper.ofEntity(userEntity)).thenReturn(responseDTO);
+        when(userMapper.ofEntity(user2)).thenReturn(response2);
 
         List<UserResponseDTO> result = userService.getAllUsers();
 
@@ -171,7 +157,7 @@ class UserServiceImplTest {
         assertThat(result).extracting(UserResponseDTO::getId).containsExactly(1L, 2L);
 
         verify(userRepository).findAll();
-        verify(userMapper, times(2)).toResponseDTO(any(UserEntity.class));
+        verify(userMapper, times(2)).ofEntity(any(UserEntity.class));
     }
 
     @Test
@@ -191,7 +177,7 @@ class UserServiceImplTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
         when(userRepository.existsByEmail(updateDTO.getEmail())).thenReturn(false);
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-        when(userMapper.toResponseDTO(userEntity)).thenReturn(responseDTO);
+        when(userMapper.ofEntity(userEntity)).thenReturn(responseDTO);
 
         UserResponseDTO result = userService.updateUser(1L, updateDTO);
 
@@ -200,7 +186,7 @@ class UserServiceImplTest {
         verify(userRepository).findById(1L);
         verify(userMapper).updateEntityFromDTO(eq(updateDTO), eq(userEntity));
         verify(userRepository).save(userEntity);
-        verify(userMapper).toResponseDTO(userEntity);
+        verify(userMapper).ofEntity(userEntity);
     }
 
     @Test
@@ -209,7 +195,7 @@ class UserServiceImplTest {
         updateDTO.setEmail("john@example.com"); // тот же email
         when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-        when(userMapper.toResponseDTO(userEntity)).thenReturn(responseDTO);
+        when(userMapper.ofEntity(userEntity)).thenReturn(responseDTO);
 
         UserResponseDTO result = userService.updateUser(1L, updateDTO);
 
@@ -226,7 +212,7 @@ class UserServiceImplTest {
         updateDTO.setEmail(null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-        when(userMapper.toResponseDTO(userEntity)).thenReturn(responseDTO);
+        when(userMapper.ofEntity(userEntity)).thenReturn(responseDTO);
 
         UserResponseDTO result = userService.updateUser(1L, updateDTO);
 

@@ -38,7 +38,6 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         userRepository.deleteAll();
     }
 
-
     @Test
     @DisplayName("Полный CRUD цикл пользователя")
     void fullUserLifecycle() {
@@ -74,10 +73,10 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         assertThat(getResponse.getBody().getId()).isEqualTo(userId);
 
         //обновление пользователя
-        UserUpdateDTO updateRequest = UserUpdateDTO.builder()
-                .name("Jane Doe")
-                .age(25)
-                .build();
+        UserUpdateDTO updateRequest = new UserUpdateDTO();
+        updateRequest.setName("Jane Doe");
+        updateRequest.setAge(25);
+
 
         ResponseEntity<UserResponseDTO> updateResponse = restTemplate.exchange(
                 BASE_URL + "/" + userId,
@@ -171,9 +170,9 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
         Long user1Id = createTestUser("User 1", "user1@example.com", 25);
         createTestUser("User 2", "user2@example.com", 30);
 
-        UserUpdateDTO updateRequest = UserUpdateDTO.builder()
-                .email("user2@example.com")
-                .build();
+        UserUpdateDTO updateRequest = new UserUpdateDTO();
+        updateRequest.setEmail("user2@example.com");
+
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 BASE_URL + "/" + user1Id,
@@ -207,11 +206,7 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
     void updateUser_NullValues_DoesNotChangeExistingFields() {
         Long userId = createTestUser("Original Name", "original@example.com", 30);
 
-        UserUpdateDTO updateRequest = UserUpdateDTO.builder()
-                .name("Updated Name")
-                .email(null)
-                .age(null)
-                .build();
+        UserUpdateDTO updateRequest = new UserUpdateDTO("Updated Name", null, null);
 
         ResponseEntity<UserResponseDTO> response = restTemplate.exchange(
                 BASE_URL + "/" + userId,
@@ -249,11 +244,10 @@ class UserControllerIntegrationTest extends BaseIntegrationTest {
 
     // Вспомогательный метод для создания тестовых пользователей
     private Long createTestUser(String name, String email, Integer age) {
-        UserEntity user = UserEntity.builder()
-                .name(name)
-                .email(email)
-                .age(age)
-                .build();
+        UserEntity user = new UserEntity();
+        user.setName(name);
+        user.setEmail(email);
+        user.setAge(age);
         return userRepository.save(user).getId();
     }
 }

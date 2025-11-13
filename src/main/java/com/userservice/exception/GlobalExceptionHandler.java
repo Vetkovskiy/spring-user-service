@@ -1,6 +1,8 @@
 package com.userservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -176,8 +178,8 @@ public class GlobalExceptionHandler {
     /**
      * Класс для стандартного формата ошибки
      */
-    @lombok.Data
-    @lombok.Builder
+    @Builder
+    @Getter
     static class ErrorResponse {
         private LocalDateTime timestamp;
         private int status;
@@ -189,8 +191,8 @@ public class GlobalExceptionHandler {
     /**
      * Класс для ошибок валидации с деталями по полям
      */
-    @lombok.Data
-    @lombok.Builder
+    @Builder
+    @Getter
     static class ValidationErrorResponse {
         private LocalDateTime timestamp;
         private int status;

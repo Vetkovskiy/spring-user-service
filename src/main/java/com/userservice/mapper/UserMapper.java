@@ -18,12 +18,12 @@ public interface UserMapper {
     /**
      * Преобразование Entity → ResponseDTO
      */
-    UserResponseDTO toResponseDTO(UserEntity user);
+    UserResponseDTO ofEntity(UserEntity user);
 
     /**
      * Преобразование UserCreateDto → Entity (для создания)
      */
-    UserEntity toEntity(UserCreateDTO dto);
+    UserEntity ofDTO(UserCreateDTO dto);
 
     /**
      * Обновление существующего Entity из UserUpdateDto

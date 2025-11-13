@@ -5,17 +5,17 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * DTO для обновления пользователя
  */
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Getter
+@Setter
 public class UserUpdateDTO {
 
     @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters")
@@ -29,4 +29,3 @@ public class UserUpdateDTO {
     @Max(value = 150, message = "Age must be at most 150")
     private Integer age;
 }
-

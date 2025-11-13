@@ -74,10 +74,10 @@ class UserRepositoryTest extends BaseRepositoryTest {
     }
 
     private UserEntity createUser(String name, String email, Integer age) {
-        return UserEntity.builder()
-                .name(name)
-                .email(email)
-                .age(age)
-                .build();
+        UserEntity user = new UserEntity();
+        user.setName(name);
+        user.setEmail(email);
+        user.setAge(age);
+        return user;
     }
 }

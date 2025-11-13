@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-
     @Override
     @Transactional
     public UserResponseDTO createUser(UserCreateDTO request) {
@@ -40,12 +39,12 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateResourceException("User with email " + request.getEmail() + " already exists");
         }
 
-        UserEntity createdUser = userMapper.toEntity(request);
+        UserEntity createdUser = userMapper.ofDTO(request);
         UserEntity savedUser = userRepository.save(createdUser);
 
         log.info("User created successfully with id: {}", savedUser.getId());
 
-        return userMapper.toResponseDTO(savedUser);
+        return userMapper.ofEntity(savedUser);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-        return userMapper.toResponseDTO(userEntity);
+        return userMapper.ofEntity(userEntity);
     }
 
     @Override
@@ -63,7 +62,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Fetching all users");
 
         return userRepository.findAll().stream()
-                .map(userMapper::toResponseDTO)
+                .map(userMapper::ofEntity)
                 .collect(Collectors.toList());
     }
 
@@ -87,7 +86,7 @@ public class UserServiceImpl implements UserService {
         UserEntity updatedUser = userRepository.save(existingUser);
 
         log.info("User updated successfully with id: {}", id);
-        return userMapper.toResponseDTO(updatedUser);
+        return userMapper.ofEntity(updatedUser);
     }
 
     @Override
